@@ -1,0 +1,24 @@
+api:
+    image: gregory90/golang-dev:latest
+    ports:
+        - "3000:3000"
+    volumes:
+        - .:/gopath/src/bitbucket.com/aria.pqstudio.pl-api
+    environment:
+        ARIA_MYSQL_HOST: mariadb.service
+        ARIA_MYSQL_PORT: 3306
+        ARIA_MYSQL_USER: aria
+        ARIA_MYSQL_PASSWORD: qazxsw21
+        ARIA_MYSQL_DATABASE: aria
+        ARIA_LOG_LEVEL: debug
+    command: go-reload /gopath/src/bitbucket.com/aria.pqstudio.pl-api/*.go
+
+mariadb:
+    image: gregory90/mariadb:latest
+    ports: 
+        - "127.0.0.1:3306:3306"
+    volumes:
+        - /data/aria.pqstudio.pl/mysql:/data 
+    environment:
+        USER: aria
+        PASS: qazxsw21

@@ -1,0 +1,62 @@
+{
+	"ImportPath": "bitbucket.com/aria.pqstudio.pl-api",
+	"GoVersion": "go1.3.1",
+	"Deps": [
+		{
+			"ImportPath": "github.com/PuerkitoBio/throttled",
+			"Rev": "65b17baf7dd2924b3085f66e4f5677e21cf76c06"
+		},
+		{
+			"ImportPath": "github.com/codegangsta/inject",
+			"Comment": "v1.0-rc1-4-g4b81725",
+			"Rev": "4b8172520a03fa190f427bbd284db01b459bfce7"
+		},
+		{
+			"ImportPath": "github.com/garyburd/redigo/redis",
+			"Rev": "08550c8cc5b9d419fc472629d749d33b98f1d785"
+		},
+		{
+			"ImportPath": "github.com/go-martini/martini",
+			"Comment": "v1.0-56-g819aca5",
+			"Rev": "819aca59fdc412028cc5348ff3d16be2715d33cf"
+		},
+		{
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "v1.2-26-g9543750",
+			"Rev": "9543750295406ef070f7de8ae9c43ccddd44e15e"
+		},
+		{
+			"ImportPath": "github.com/golang/groupcache/lru",
+			"Rev": "d2a1805917c4ba5f227d5b1f9a871dd274a07542"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "14f550f51af52180c2eefed15e5fd18d63c0a64a"
+		},
+		{
+			"ImportPath": "github.com/jamieomatthews/validation",
+			"Rev": "da52a0aef8ab62d4c813e06683e3c4fa0522ec57"
+		},
+		{
+			"ImportPath": "github.com/justinas/alice",
+			"Rev": "e82c7d9ec9ebfd83e90d4fd39ce934f5fc0b0b5f"
+		},
+		{
+			"ImportPath": "github.com/kelseyhightower/envconfig",
+			"Comment": "v1.0.0-4-g7e6571f",
+			"Rev": "7e6571f118cf0b0ef44f3049cf842e94f9bf210e"
+		},
+		{
+			"ImportPath": "github.com/martini-contrib/binding",
+			"Rev": "1928ed2850e7d65507ea4198d935597e43612c7d"
+		},
+		{
+			"ImportPath": "github.com/op/go-logging",
+			"Rev": "25891250fe98858f83506bc4411f82722d1be344"
+		},
+		{
+			"ImportPath": "github.com/zenazn/goji",
+			"Rev": "ac6efd8f69cec8b916082cf7e45d0d515030e03e"
+		}
+	]
+}
