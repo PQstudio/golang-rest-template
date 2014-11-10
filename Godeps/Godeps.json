@@ -3,8 +3,31 @@
 	"GoVersion": "go1.3.1",
 	"Deps": [
 		{
+			"ImportPath": "code.google.com/p/go-uuid/uuid",
+			"Comment": "null-12",
+			"Rev": "7dda39b2e7d5e265014674c5af696ba4186679e9"
+		},
+		{
+			"ImportPath": "code.google.com/p/go.crypto/bcrypt",
+			"Comment": "null-231",
+			"Rev": "88f995681294397936c136182f54e1f6891db323"
+		},
+		{
+			"ImportPath": "code.google.com/p/go.crypto/blowfish",
+			"Comment": "null-231",
+			"Rev": "88f995681294397936c136182f54e1f6891db323"
+		},
+		{
+			"ImportPath": "github.com/BurntSushi/migration",
+			"Rev": "c45b897f13350786ccaf2b7403b92b1c7ad85844"
+		},
+		{
 			"ImportPath": "github.com/PuerkitoBio/throttled",
 			"Rev": "65b17baf7dd2924b3085f66e4f5677e21cf76c06"
+		},
+		{
+			"ImportPath": "github.com/RangelReale/osin",
+			"Rev": "d51e23416093e4cad7edf0839283dd72da897571"
 		},
 		{
 			"ImportPath": "github.com/codegangsta/inject",

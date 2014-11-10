@@ -2,11 +2,13 @@ package utils
 
 import (
 	. "bitbucket.com/aria.pqstudio.pl-api/utils/logger"
+	"code.google.com/p/go-uuid/uuid"
 	"github.com/PuerkitoBio/throttled"
 	"github.com/PuerkitoBio/throttled/store"
 	"github.com/gorilla/context"
 	router "github.com/zenazn/goji/web"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -31,4 +33,10 @@ func M1(h http.Handler) http.Handler {
 		h.ServeHTTP(w, r)
 	}
 	return http.HandlerFunc(fn)
+}
+
+func NewUUID() string {
+	uuid := uuid.New()
+
+	return strings.Replace(uuid, "-", "", -1)
 }

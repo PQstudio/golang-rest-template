@@ -1,15 +1,16 @@
 package main
 
 import (
-	. "bitbucket.com/aria.pqstudio.pl-api/utils/db"
+	"bitbucket.com/aria.pqstudio.pl-api/utils/db"
 	. "bitbucket.com/aria.pqstudio.pl-api/utils/logger"
+	"flag"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/op/go-logging"
-
-	"flag"
 	"github.com/zenazn/goji"
 
-	"database/sql"
+	"bitbucket.com/aria.pqstudio.pl-api/oauth2"
+	repos "bitbucket.com/aria.pqstudio.pl-api/oauth2/repositories"
+	"github.com/RangelReale/osin"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -56,20 +57,35 @@ func init() {
 		SetLevel(logging.CRITICAL)
 	}
 
-	config.MySQLHost = "mariadb.service"
+	// configure MySQL
 	conn := config.MySQLUser + ":" + config.MySQLPassword + "@tcp(" +
-		config.MySQLHost + ":" + config.MySQLPort + ")/" + config.MySQLDatabase + "?charset=utf8"
-	DB, err = sql.Open("mysql", conn)
+		config.MySQLHost + ":" + config.MySQLPort + ")/" + config.MySQLDatabase + "?charset=utf8&parseTime=true"
+	err = db.Connect("mysql", conn)
 
 	if err != nil {
 		Log.Critical(err.Error())
 	} else {
+		// TODO: ping database
 		Log.Info("Connection to database acquired: %s", conn)
+	}
+
+	// configure oauth2 server
+	oauth2.Init()
+
+	c := &osin.DefaultClient{
+		Id:          "1234",
+		Secret:      "aabbccdd",
+		RedirectUri: "localhost",
+	}
+	err = repos.CreateClient(c)
+	if err != nil {
+		Log.Critical(err.Error())
 	}
 }
 
 func main() {
 	setupRoutes()
+	defer db.DB.Close()
 
 	flag.Set("bind", ":3000")
 	goji.Serve()

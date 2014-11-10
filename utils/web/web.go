@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/gorilla/context"
 	"github.com/martini-contrib/binding"
 )
 
@@ -27,7 +28,7 @@ func Bind(w http.ResponseWriter, r io.ReadCloser, obj Model) bool {
 
 	if err := obj.Validate(); err != nil {
 		// go doesn't have 422 status code so yeah, teapot
-		error := Error{
+		error := &Error{
 			Message: "validation_error",
 			Errors:  err,
 		}
@@ -41,7 +42,18 @@ func Bind(w http.ResponseWriter, r io.ReadCloser, obj Model) bool {
 func FromJSON(w http.ResponseWriter, r io.ReadCloser, obj Model) bool {
 	defer r.Close()
 	if err := json.NewDecoder(r).Decode(obj); err != nil {
-		error := Error{Message: "deserialization_error"}
+		error := &Error{Message: "deserialization_error"}
+		HttpError(w, error, http.StatusBadRequest)
+
+		return false
+	}
+	return true
+}
+
+func FromJSONStrict(w http.ResponseWriter, r io.ReadCloser, obj interface{}) bool {
+	defer r.Close()
+	if err := json.NewDecoder(r).Decode(obj); err != nil {
+		error := &Error{Message: "deserialization_error"}
 		HttpError(w, error, http.StatusBadRequest)
 
 		return false
@@ -51,7 +63,7 @@ func FromJSON(w http.ResponseWriter, r io.ReadCloser, obj Model) bool {
 
 func ToJSON(w http.ResponseWriter, obj interface{}) bool {
 	if err := json.NewEncoder(w).Encode(obj); err != nil {
-		error := Error{Message: "serialization_error"}
+		error := &Error{Message: "serialization_error"}
 		HttpError(w, error, http.StatusBadRequest)
 
 		return false
@@ -59,10 +71,14 @@ func ToJSON(w http.ResponseWriter, obj interface{}) bool {
 	return true
 }
 
-func HttpError(w http.ResponseWriter, error Error, status int) {
-	Log.Error(error.Message)
-	w.WriteHeader(status)
-	ToJSON(w, error)
+func HttpError(w http.ResponseWriter, err *Error, status int) {
+	if err != nil {
+		Log.Error(err.Message)
+		w.WriteHeader(status)
+		ToJSON(w, err)
+	} else {
+		w.WriteHeader(status)
+	}
 }
 
 func Whitelist(from Model, fields ...string) map[string]interface{} {
@@ -78,4 +94,8 @@ func Whitelist(from Model, fields ...string) map[string]interface{} {
 	}
 
 	return out
+}
+
+func ContextS(r *http.Request, key string) string {
+	return string(context.Get(r, key).(string))
 }

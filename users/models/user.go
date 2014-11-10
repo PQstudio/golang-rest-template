@@ -3,11 +3,15 @@ package user
 import (
 	"github.com/jamieomatthews/validation"
 	"github.com/martini-contrib/binding"
+	"time"
 )
 
 type User struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	UID       string    `json:"uid"`
+	Email     string    `json:"email"`
+	Password  string    `json:"password"`
+	Salt      string    `json:"-"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 func (user User) Validate() binding.Errors {
