@@ -10,4 +10,6 @@ TODO:
  - cli for setting up new app (oauth2:create:client, user:create:admin itp.)
 
 MAYBE:
- - move password management to user model
+ - move password management to user model,
+ - better whitelisting on response,
+ - rethink validation
