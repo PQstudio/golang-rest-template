@@ -61,10 +61,6 @@
 			"Rev": "da52a0aef8ab62d4c813e06683e3c4fa0522ec57"
 		},
 		{
-			"ImportPath": "github.com/justinas/alice",
-			"Rev": "e82c7d9ec9ebfd83e90d4fd39ce934f5fc0b0b5f"
-		},
-		{
 			"ImportPath": "github.com/kelseyhightower/envconfig",
 			"Comment": "v1.0.0-4-g7e6571f",
 			"Rev": "7e6571f118cf0b0ef44f3049cf842e94f9bf210e"
@@ -79,7 +75,8 @@
 		},
 		{
 			"ImportPath": "github.com/zenazn/goji",
-			"Rev": "ac6efd8f69cec8b916082cf7e45d0d515030e03e"
+			"Comment": "v0.8.1-6-gdcb7f71",
+			"Rev": "dcb7f7169428645921b9914bdd4f61f1b1936564"
 		}
 	]
 }

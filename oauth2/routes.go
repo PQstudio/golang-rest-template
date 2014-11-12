@@ -1,19 +1,20 @@
 package oauth2
 
 import (
-	. "bitbucket.com/aria.pqstudio.pl-api/utils"
-	//. "bitbucket.com/aria.pqstudio.pl-api/utils/logger"
+	"bitbucket.com/aria.pqstudio.pl-api/utils"
 	"bitbucket.com/aria.pqstudio.pl-api/utils/web"
 
 	"database/sql"
 	"net/http"
 
 	"github.com/RangelReale/osin"
-	"github.com/justinas/alice"
 	router "github.com/zenazn/goji/web"
+	"github.com/zenazn/goji/web/middleware"
 
-	//"bitbucket.com/aria.pqstudio.pl-api/users/models"
-	userRepo "bitbucket.com/aria.pqstudio.pl-api/users/repositories"
+	"bitbucket.com/aria.pqstudio.pl-api/user/model"
+	userService "bitbucket.com/aria.pqstudio.pl-api/user/service"
+
+	accessService "bitbucket.com/aria.pqstudio.pl-api/oauth2/service"
 
 	"bitbucket.com/aria.pqstudio.pl-api/security"
 )
@@ -21,15 +22,16 @@ import (
 var Routes *router.Mux = router.New()
 
 func init() {
-	limit := RateLimit(1000, 60)
-	middleware := alice.New(M1, limit.Throttle)
+	Routes.Use(middleware.SubRouter)
 
-	Routes.Post("/token", R(middleware.ThenFunc(Token)))
-	Routes.Put("/token/invalidate", R(middleware.ThenFunc(TokenInvalidate)))
-	Routes.Post("/token/check", R(middleware.ThenFunc(TokenCheck)))
+	limit := utils.RateLimit(1000, 60)
+
+	Routes.Post("/token", utils.M(limit.Throttle, Token))
+	Routes.Put("/token/invalidate", utils.M(limit.Throttle, TokenInvalidate))
+	Routes.Post("/token/check", utils.M(limit.Throttle, TokenCheck))
 }
 
-func TokenCheck(w http.ResponseWriter, r *http.Request) {
+func TokenCheck(w http.ResponseWriter, r *http.Request) error {
 	token := AccessToken(r)
 	res := make(map[string]string, 1)
 
@@ -41,22 +43,26 @@ func TokenCheck(w http.ResponseWriter, r *http.Request) {
 	}
 
 	web.ToJSON(w, &res)
+	return nil
 }
 
 // TODO: needs authentication
-func TokenInvalidate(w http.ResponseWriter, r *http.Request) {
+func TokenInvalidate(w http.ResponseWriter, r *http.Request) error {
 	token := AccessToken(r)
 
 	Server.Storage.RemoveAccess(token)
 
 	web.HttpError(w, nil, http.StatusNoContent)
+
+	return nil
 }
 
-func Token(w http.ResponseWriter, r *http.Request) {
+func Token(w http.ResponseWriter, r *http.Request) error {
 	var data Data
 
-	if ok := web.FromJSONStrict(w, r.Body, &data); !ok {
-		return
+	err := web.FromJSONStrict(w, r.Body, &data)
+	if err != nil {
+		return err
 	}
 	r.ParseForm()
 	r.Form.Add("grant_type", data.GrantType)
@@ -69,15 +75,16 @@ func Token(w http.ResponseWriter, r *http.Request) {
 
 	resp := Server.NewResponse()
 	defer resp.Close()
+	var user *model.User
+
 	if ar := Server.HandleAccessRequest(resp, r); ar != nil {
 		switch ar.Type {
 		case osin.PASSWORD:
-			user, err := userRepo.GetOneByEmail(ar.Username)
+			user, err = userService.GetUserByEmail(ar.Username)
 			if err == sql.ErrNoRows {
 				ar.Authorized = false
 			} else if err != nil {
-				web.HttpError(w, nil, http.StatusInternalServerError)
-				return
+				return err
 			} else if security.CompareHashAndSalt(ar.Password, user.Salt, user.Password) {
 				ar.Authorized = true
 			}
@@ -88,7 +95,13 @@ func Token(w http.ResponseWriter, r *http.Request) {
 		Server.FinishAccessRequest(resp, r, ar)
 	}
 	if resp.IsError && resp.InternalError != nil {
-		web.HttpError(w, nil, http.StatusInternalServerError)
+		return resp.InternalError
+	}
+
+	if !resp.IsError {
+		accessService.UpdateAccessByToken(resp.Output["access_token"].(string), user.UID)
 	}
 	osin.OutputJSON(resp, w, r)
+
+	return nil
 }

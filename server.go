@@ -9,7 +9,7 @@ import (
 	"github.com/zenazn/goji"
 
 	"bitbucket.com/aria.pqstudio.pl-api/oauth2"
-	repos "bitbucket.com/aria.pqstudio.pl-api/oauth2/repositories"
+	repos "bitbucket.com/aria.pqstudio.pl-api/oauth2/service"
 	"github.com/RangelReale/osin"
 	_ "github.com/go-sql-driver/mysql"
 )

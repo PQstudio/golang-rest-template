@@ -1,7 +1,6 @@
 package oauth2
 
 import (
-	//. "bitbucket.com/aria.pqstudio.pl-api/utils/logger"
 	"bitbucket.com/aria.pqstudio.pl-api/oauth2/storage"
 	"github.com/RangelReale/osin"
 	"net/http"
@@ -23,8 +22,8 @@ func Init() {
 	sconfig := osin.NewServerConfig()
 	sconfig.AllowedAuthorizeTypes = osin.AllowedAuthorizeType{osin.TOKEN}
 	sconfig.AllowedAccessTypes = osin.AllowedAccessType{osin.REFRESH_TOKEN, osin.PASSWORD, osin.ASSERTION}
-	sconfig.AllowGetAccessRequest = true
-	Server = osin.NewServer(sconfig, oauth2.NewMySQLStorage())
+	sconfig.AllowGetAccessRequest = false
+	Server = osin.NewServer(sconfig, storage.NewMySQLStorage())
 }
 
 func AccessToken(r *http.Request) string {

@@ -1,12 +1,11 @@
-package oauth2
+package storage
 
 import (
 	. "bitbucket.com/aria.pqstudio.pl-api/utils/logger"
 	"errors"
 	"github.com/RangelReale/osin"
 
-	"bitbucket.com/aria.pqstudio.pl-api/oauth2/repositories"
-	"database/sql"
+	"bitbucket.com/aria.pqstudio.pl-api/oauth2/service"
 )
 
 type MySQLStorage struct {
@@ -27,13 +26,11 @@ func (s *MySQLStorage) Close() {
 
 func (s *MySQLStorage) GetClient(id string) (osin.Client, error) {
 	Log.Notice("OAuth2, get client: %s\n", id)
-	c, _, err := oauth2.GetClientByID(id)
-
-	if err == sql.ErrNoRows {
-		return nil, errors.New("Client not found")
-	} else if err != nil {
-		return nil, errors.New("Server error")
+	c, err := service.GetClientByID(id)
+	if err != nil {
+		return nil, err
 	}
+
 	return c, nil
 }
 
@@ -46,11 +43,8 @@ func (s *MySQLStorage) SetClient(id string, client osin.Client) error {
 		RedirectUri: client.GetRedirectUri(),
 	}
 
-	err := oauth2.CreateClient(c)
-	if err != nil {
-		return errors.New("Server error")
-	}
-	return nil
+	err := service.CreateClient(c)
+	return err
 }
 
 func (s *MySQLStorage) SaveAuthorize(data *osin.AuthorizeData) error {
@@ -68,22 +62,16 @@ func (s *MySQLStorage) RemoveAuthorize(code string) error {
 func (s *MySQLStorage) SaveAccess(data *osin.AccessData) error {
 	Log.Notice("OAuth2, save access: %s\n", data.AccessToken)
 
-	_, err := oauth2.CreateAccess(data)
-	if err != nil {
-		return errors.New("Server error")
-	}
-
-	return nil
+	err := service.CreateAccess(data)
+	return err
 }
 
 func (s *MySQLStorage) LoadAccess(code string) (*osin.AccessData, error) {
 	Log.Notice("OAuth2, load access: %s\n", code)
 
-	a, _, err := oauth2.GetAccessByToken(code)
-	if err == sql.ErrNoRows {
-		return nil, errors.New("Access not found")
-	} else if err != nil {
-		return nil, errors.New("Server error")
+	a, err := service.GetAccessByToken(code)
+	if err != nil {
+		return nil, err
 	}
 
 	return a, nil
@@ -92,22 +80,15 @@ func (s *MySQLStorage) LoadAccess(code string) (*osin.AccessData, error) {
 func (s *MySQLStorage) RemoveAccess(code string) error {
 	Log.Notice("OAuth2, remove access: %s\n", code)
 
-	err := oauth2.DeleteAccessByToken(code)
-	if err != nil {
-		return errors.New("Server error")
-	}
-
-	return nil
+	err := service.DeleteAccessByToken(code)
+	return err
 }
 
 func (s *MySQLStorage) LoadRefresh(code string) (*osin.AccessData, error) {
 	Log.Notice("OAuth2, load refresh: %s\n", code)
-	a, _, err := oauth2.GetAccessByRefresh(code)
-	Log.Debug("%#v", a)
-	if err == sql.ErrNoRows {
-		return nil, errors.New("Refresh not found")
-	} else if err != nil {
-		return nil, errors.New("Server error")
+	a, err := service.GetAccessByRefresh(code)
+	if err != nil {
+		return nil, err
 	}
 
 	return a, nil

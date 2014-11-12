@@ -1,9 +1,10 @@
-package migrations
+package migration
 
 import (
 	"github.com/BurntSushi/migration"
 )
 
+// TODO: move migrations to separate project (https://bitbucket.org/liamstask/goose)
 var Migrations = []migration.Migrator{
 	SetupUser,
 	SetupOAuth2,

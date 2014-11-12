@@ -4,16 +4,16 @@ import (
 	"database/sql"
 	"github.com/BurntSushi/migration"
 
-	"bitbucket.com/aria.pqstudio.pl-api/migrations"
+	migrate "bitbucket.com/aria.pqstudio.pl-api/migration"
 )
 
 var DB *sql.DB
 
 func Connect(provider string, dsn string) error {
-	migration.DefaultGetVersion = migrations.GetVersion
-	migration.DefaultSetVersion = migrations.SetVersion
+	migration.DefaultGetVersion = migrate.GetVersion
+	migration.DefaultSetVersion = migrate.SetVersion
 
-	database, err := migration.Open(provider, dsn, migrations.Migrations)
+	database, err := migration.Open(provider, dsn, migrate.Migrations)
 	DB = database
 	return err
 }

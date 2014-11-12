@@ -21,54 +21,46 @@ type Error struct {
 	Errors  interface{} `json:"errors,omitempty"`
 }
 
-func Bind(w http.ResponseWriter, r io.ReadCloser, obj Model) bool {
-	if ok := FromJSON(w, r, obj); !ok {
-		return false
+func (e *Error) Error() string {
+	return e.Message
+}
+
+func Bind(w http.ResponseWriter, r io.ReadCloser, obj Model) error {
+	err := FromJSON(w, r, obj)
+	if err != nil {
+		return err
 	}
 
 	if err := obj.Validate(); err != nil {
-		// go doesn't have 422 status code so yeah, teapot
-		error := &Error{
+		return &Error{
 			Message: "validation_error",
 			Errors:  err,
 		}
-
-		HttpError(w, error, http.StatusTeapot)
-		return false
 	}
-	return true
+	return nil
 }
 
-func FromJSON(w http.ResponseWriter, r io.ReadCloser, obj Model) bool {
+func FromJSON(w http.ResponseWriter, r io.ReadCloser, obj Model) error {
 	defer r.Close()
 	if err := json.NewDecoder(r).Decode(obj); err != nil {
-		error := &Error{Message: "deserialization_error"}
-		HttpError(w, error, http.StatusBadRequest)
-
-		return false
+		return &Error{Message: "deserialization_error"}
 	}
-	return true
+	return nil
 }
 
-func FromJSONStrict(w http.ResponseWriter, r io.ReadCloser, obj interface{}) bool {
+func FromJSONStrict(w http.ResponseWriter, r io.ReadCloser, obj interface{}) error {
 	defer r.Close()
 	if err := json.NewDecoder(r).Decode(obj); err != nil {
-		error := &Error{Message: "deserialization_error"}
-		HttpError(w, error, http.StatusBadRequest)
-
-		return false
+		return &Error{Message: "deserialization_error"}
 	}
-	return true
+	return nil
 }
 
-func ToJSON(w http.ResponseWriter, obj interface{}) bool {
+func ToJSON(w http.ResponseWriter, obj interface{}) error {
 	if err := json.NewEncoder(w).Encode(obj); err != nil {
-		error := &Error{Message: "serialization_error"}
-		HttpError(w, error, http.StatusBadRequest)
-
-		return false
+		return &Error{Message: "serialization_error"}
 	}
-	return true
+	return nil
 }
 
 func HttpError(w http.ResponseWriter, err *Error, status int) {
