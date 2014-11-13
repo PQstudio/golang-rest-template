@@ -1,11 +1,11 @@
 package oauth2
 
 import (
-	"bitbucket.com/aria.pqstudio.pl-api/utils"
-	"bitbucket.com/aria.pqstudio.pl-api/utils/web"
-
 	"database/sql"
 	"net/http"
+
+	"bitbucket.com/aria.pqstudio.pl-api/utils"
+	"bitbucket.com/aria.pqstudio.pl-api/utils/web"
 
 	"github.com/RangelReale/osin"
 	router "github.com/zenazn/goji/web"
@@ -52,7 +52,7 @@ func TokenInvalidate(w http.ResponseWriter, r *http.Request) error {
 
 	Server.Storage.RemoveAccess(token)
 
-	web.HttpError(w, nil, http.StatusNoContent)
+	utils.HttpError(w, nil, http.StatusNoContent)
 
 	return nil
 }
@@ -77,7 +77,8 @@ func Token(w http.ResponseWriter, r *http.Request) error {
 	defer resp.Close()
 	var user *model.User
 
-	if ar := Server.HandleAccessRequest(resp, r); ar != nil {
+	ar := Server.HandleAccessRequest(resp, r)
+	if ar != nil {
 		switch ar.Type {
 		case osin.PASSWORD:
 			user, err = userService.GetUserByEmail(ar.Username)
@@ -99,7 +100,9 @@ func Token(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	if !resp.IsError {
-		accessService.UpdateAccessByToken(resp.Output["access_token"].(string), user.UID)
+		if ar.Type == osin.PASSWORD {
+			accessService.UpdateAccessByToken(resp.Output["access_token"].(string), user.UID)
+		}
 	}
 	osin.OutputJSON(resp, w, r)
 

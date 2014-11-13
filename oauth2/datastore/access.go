@@ -29,18 +29,9 @@ func CreateAccess(data *model.AccessData) error {
 	}
 	defer stmt.Close()
 
-	// TODO: use ORM-ish library to deal with null values correctly
-	if data.RefreshToken != "" {
-		_, err = stmt.Exec(data.UID, data.ClientID, nil, nil, nil, data.AccessToken, data.RefreshToken, data.ExpiresIn, data.Scope, data.RedirectUri, data.CreatedAt)
-		if err != nil {
-			return err
-		}
-
-	} else {
-		_, err = stmt.Exec(data.UID, data.ClientID, nil, nil, nil, data.AccessToken, nil, data.ExpiresIn, data.Scope, data.RedirectUri, data.CreatedAt)
-		if err != nil {
-			return err
-		}
+	_, err = stmt.Exec(data.UID, data.ClientID, nil, nil, nil, data.AccessToken, data.RefreshToken, data.ExpiresIn, data.Scope, data.RedirectUri, data.CreatedAt)
+	if err != nil {
+		return err
 	}
 
 	return nil

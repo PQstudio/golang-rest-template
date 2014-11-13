@@ -6,7 +6,7 @@ import (
 	"github.com/gorilla/context"
 
 	"bitbucket.com/aria.pqstudio.pl-api/oauth2"
-	"bitbucket.com/aria.pqstudio.pl-api/utils/web"
+	"bitbucket.com/aria.pqstudio.pl-api/utils"
 
 	"bitbucket.com/aria.pqstudio.pl-api/oauth2/datastore"
 	"bitbucket.com/aria.pqstudio.pl-api/user/service"
@@ -17,13 +17,13 @@ func Auth(h http.Handler) http.Handler {
 		token := oauth2.AccessToken(r)
 		access, err := datastore.GetAccessByToken(token)
 		if err != nil {
-			web.HttpError(w, nil, http.StatusForbidden)
+			utils.HttpError(w, nil, http.StatusForbidden)
 			return
 		}
 
 		user, err := service.GetUser(access.UserID)
 		if err != nil {
-			web.HttpError(w, nil, http.StatusForbidden)
+			utils.HttpError(w, nil, http.StatusForbidden)
 			return
 		}
 		context.Set(r, "userID", user.UID)

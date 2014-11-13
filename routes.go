@@ -39,7 +39,7 @@ func setupRoutes() {
 }
 
 func NotFound(w http.ResponseWriter, r *http.Request) {
-	error := &web.Error{Message: "url_not_found"}
+	error := &web.NotFoundError{Message: "url_not_found"}
 
 	Log.Info("URL not found: %s", r.RequestURI)
 	w.WriteHeader(http.StatusNotFound)

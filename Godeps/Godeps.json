@@ -18,10 +18,6 @@
 			"Rev": "88f995681294397936c136182f54e1f6891db323"
 		},
 		{
-			"ImportPath": "github.com/BurntSushi/migration",
-			"Rev": "c45b897f13350786ccaf2b7403b92b1c7ad85844"
-		},
-		{
 			"ImportPath": "github.com/PuerkitoBio/throttled",
 			"Rev": "65b17baf7dd2924b3085f66e4f5677e21cf76c06"
 		},

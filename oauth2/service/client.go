@@ -2,7 +2,6 @@ package service
 
 import (
 	"bitbucket.com/aria.pqstudio.pl-api/utils"
-	//. "bitbucket.com/aria.pqstudio.pl-api/utils/logger"
 
 	"bitbucket.com/aria.pqstudio.pl-api/oauth2/datastore"
 	"bitbucket.com/aria.pqstudio.pl-api/oauth2/model"

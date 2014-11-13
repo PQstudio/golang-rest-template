@@ -9,8 +9,6 @@ import (
 	"github.com/zenazn/goji"
 
 	"bitbucket.com/aria.pqstudio.pl-api/oauth2"
-	repos "bitbucket.com/aria.pqstudio.pl-api/oauth2/service"
-	"github.com/RangelReale/osin"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -71,16 +69,6 @@ func init() {
 
 	// configure oauth2 server
 	oauth2.Init()
-
-	c := &osin.DefaultClient{
-		Id:          "1234",
-		Secret:      "aabbccdd",
-		RedirectUri: "localhost",
-	}
-	err = repos.CreateClient(c)
-	if err != nil {
-		Log.Critical(err.Error())
-	}
 }
 
 func main() {

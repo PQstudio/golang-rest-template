@@ -1,15 +1,15 @@
 NOT PRODUCTION READY. DON'T USE IT.
 
 TODO:
- - add lightweight database abstraction layer(meddler?),
  - RedisStore for rate limit,
  - Redis cache for oauth2 tokens,
- - custom errors,
- - better database migrations(goose?),
- - database fixtures for dev(goose?),
- - cli for setting up new app (oauth2:create:client, user:create:admin itp.)
+ - ACL, role based authorization,
+ - file upload(fs abstraction?),
+ - fix validation,
+ - add debug log messages
 
 MAYBE:
  - move password management to user model,
  - better whitelisting on response,
  - rethink validation
+ - rething database migrations / dev migrations & fixtures
